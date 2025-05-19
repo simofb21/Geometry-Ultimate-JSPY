@@ -1,0 +1,12 @@
+/* codice css per gioco sul raspberry */
+body {
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+canvas {
+    background-color: #00034a;
+}  
