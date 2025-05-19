@@ -51,7 +51,6 @@ async function getPositionWasd(event) { //se va in errore ottengo da wasd
             return;
     }
 }
-
 async function getPositionJoystick() { //ottengo dal joystick
     try {
         const response = await fetch('http://192.168.1.7:5000/get_position'); // richiesta GET al server
@@ -139,7 +138,7 @@ function checkCollision() {
 }
 function gameLoop() {
     if(gameOver){
-        alert("Hai perso , refresha la pagina");
+       
     }
     moveSnake();
     console.log(x, y);

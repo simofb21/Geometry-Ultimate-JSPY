@@ -7,7 +7,21 @@
     <link rel="stylesheet" href="../static/css/style.css">
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>   
-    <script src="../static/js/scrypt.js"></script>
+    <canvas id="gameCanvas"></canvas>
+    <div id="gameOver" display="none">
+        <h1>Il gioco è finito</h1>
+        <p id="score"></p>
+        <p>Desideri ricevere il tuo punteggio per email?</p>
+        <form id="emailForm">
+            <label for="emailInput">Inserisci la tua email:</label>
+            <input type="email" id="emailInput" name="email" required>
+            <button type="submit">Invia punteggio</button>
+        </form>
+        <button id="restartButton">Restart</button>
+        <p id="prompt"></p>
+    </div>
+
+    </div>
+    <script src="../static/js/script_finale.js"></script>
 </body> 
 </html> 
