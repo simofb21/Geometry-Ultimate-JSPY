@@ -6,29 +6,24 @@ L' invio avviene tramite una richiesta POST al server Flask contente x,y in form
 import serial
 import requests
 import json
-# lo usiamo da windows
-#codice che funziona in questo modo : comunicazione via seriale tra arduino e pc , e pc comunica con raspberry via post
-# quindi il pc legge i dati da arduino e li manda al raspberry via post
 
-# Configura la porta seriale : assicurati di usare la porta corretta per il tuo dispositivo Bluetooth , se si usa windows è com5, o com7 ecc
-# se si usa linux o raspberry è /dev/ttyUSB0 o /dev/rfcomm0 ecc
 ser = serial.Serial(
-    port='COM5',  #così è da pc , sarebbe da cambiare con la porta seriale del raspberry
-    baudrate=9600,        
-    timeout=1            
+    port='COM5',  # Cambia con la porta corretta
+    baudrate=9600,
+    timeout=1
 )
 
-url = "http://10.0.98.30:5000/update_position"  # da cambiare con ip raspberry a scuola
+url = "http://10.0.98.30:5000/update_position"  # Cambia con l'IP corretto
 
 print("i am currently listening your messages")
-        
+
 def send_position(x, y):
     """
-   invio posizione con post a pagina update position
+    Invia posizione con POST a /update_position
     """
     data = {
         "x": x,
-        "y": y
+        "y": y,
     }
     try:
         response = requests.post(url, json=data)
@@ -36,23 +31,41 @@ def send_position(x, y):
             print("Posizione aggiornata con successo")
         else:
             print(f"Errore: {response.status_code}")
-    except requests.ConnectionError as e: 
+    except requests.ConnectionError as e:
+        print(f"Connection error: {e}")
+    except requests.Timeout as e:
+        print(f"Request timed out: {e}")
+
+def send_click(click):
+    """
+    Invia click con POST a /update_position
+    """
+    data = {"click": click}
+    try:
+        response = requests.post(url, json=data)
+        if response.status_code == 204:
+            print("Click aggiornato con successo")
+        else:
+            print(f"Errore: {response.status_code}")
+    except requests.ConnectionError as e:
         print(f"Connection error: {e}")
     except requests.Timeout as e:
         print(f"Request timed out: {e}")
 
 try:
     while True:
-        if ser.in_waiting > 0: # controlla se ci sono dati in arrivo sulla porta seriale
+        if ser.in_waiting > 0:
             data = ser.readline().decode('utf-8').strip()
             print(f"Received: {data}")
-            #legge da seriale e stampa a video 
             try:
-                position = json.loads(data) #se ha ricevuto una x e una y ...
-                if "X" in position and "Y" in position:
+                position = json.loads(data)
+                if "X" in position and "Y" in position and "CLICK" in position:
                     x = position["X"]
                     y = position["Y"]
-                    send_position(x, y)  # mette in json i dati e li invia al server
+                    click = position["CLICK"]
+                    print(f"X: {x}, Y: {y}, CLICK: {click}")
+                    send_position(x, y)  # invia sempre posizione
+                    send_click(click)  # invia click solo se click == 1
                 else:
                     print(f"Invalid data format: {data}")
             except json.JSONDecodeError:

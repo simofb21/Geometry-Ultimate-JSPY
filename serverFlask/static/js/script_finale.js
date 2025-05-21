@@ -2,6 +2,7 @@
 // variabili globali per x e y
 let x = 0;
 let y = 0;
+let cliccato = 0;
 let snakeSize = 25;
 let joystick = true;
 let nemici = [];
@@ -47,8 +48,11 @@ async function getPositionWasd(event) { //se va in errore ottengo da wasd
         case 'd':
             x += snakeSize;
             break;
-        default:
+        case 'Space':
+            cliccato = 1;
+            default:
             return;
+            
     }
 }
 async function getPositionJoystick() { //ottengo dal joystick

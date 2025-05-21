@@ -1,5 +1,5 @@
 '''
-server flask in esecuzione su raspberry, che riceve x, y da arduino via post, aggiorna  la pagina get_position , dove andrà js a leggere x,y
+server flask in esecuzione su raspberry, che riceve x, y,click da arduino via post, aggiorna  la pagina get_position , dove andrà js a leggere x,y
 '''
 import smtplib
 from email.mime.text import MIMEText
@@ -10,11 +10,22 @@ from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
 current_position = {"x": 0, "y": 0}
+cliccato  = 0
 
 @app.route('/')
 def home(): 
     return render_template('index.html')
 
+@app.route('/send_click', methods=['POST']) #se richieste post a send click
+def send_click():
+    data = request.get_json()
+    if data and "click" in data:
+        cliccato = data["click"] #aggiorna il click a quello ricevuto
+        print(f"Click: {cliccato}")
+
+@app.route('/isCliccato', methods=['GET']) #se richieste get a is cliccato
+def isCliccato():
+    return jsonify({"cliccato": cliccato}) #restituisce il click corrente in formato json
 @app.route('/update_position', methods=['POST']) # se richieste post  a update position
 def update_position():
     data = request.get_json()
